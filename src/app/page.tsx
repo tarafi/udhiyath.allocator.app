@@ -90,16 +90,17 @@ export default function Home() {
         yPos = (doc as any).lastAutoTable.finalY + 10;
         
         doc.setFontSize(12);
-        doc.text("Individual Owner's Share (1 of 7):", 14, yPos);
+        const shareholders = animal.shareholders > 0 ? animal.shareholders : 1;
+        doc.text(`Individual Owner's Share (1 of ${animal.shareholders}):`, 14, yPos);
         yPos += 2;
 
         autoTable(doc, {
              startY: yPos,
              body: [
-                 ['Meat', `${formatWeight(animal.shares.owner.meat / 7)} kg`],
-                 ['Bone', `${formatWeight(animal.shares.owner.bone / 7)} kg`],
-                 ['Liver', `${formatWeight(animal.shares.owner.liver / 7)} kg`],
-                 ['Total', `${formatWeight(animal.shares.owner.total / 7)} kg`],
+                 ['Meat', `${formatWeight(animal.shares.owner.meat / shareholders)} kg`],
+                 ['Bone', `${formatWeight(animal.shares.owner.bone / shareholders)} kg`],
+                 ['Liver', `${formatWeight(animal.shares.owner.liver / shareholders)} kg`],
+                 ['Total', `${formatWeight(animal.shares.owner.total / shareholders)} kg`],
              ],
              theme: 'plain',
              styles: { fontSize: 10 },

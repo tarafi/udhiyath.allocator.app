@@ -3,6 +3,7 @@ export interface AnimalData {
   meatWeights: number[];
   boneWeights: number[];
   liverWeights: number[];
+  shareholders: number;
 }
 
 export interface CalculatedAnimalData extends AnimalData {

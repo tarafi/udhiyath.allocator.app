@@ -27,6 +27,7 @@ interface AnimalCardProps {
 const formatWeight = (weight: number) => weight.toFixed(2);
 
 export function AnimalCard({ animal, onEdit }: AnimalCardProps) {
+  const shareholders = animal.shareholders > 0 ? animal.shareholders : 1;
   return (
     <Card className="shadow-md">
       <AccordionItem value={animal.id} className="border-b-0">
@@ -91,21 +92,21 @@ export function AnimalCard({ animal, onEdit }: AnimalCardProps) {
           </Table>
 
           <div className="mt-6 pt-4 border-t">
-            <h4 className="font-semibold text-lg mb-2 text-primary">Individual Owner's Share (1 of 7)</h4>
+            <h4 className="font-semibold text-lg mb-2 text-primary">Individual Owner's Share (1 of {animal.shareholders})</h4>
             <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
                 <span className="text-muted-foreground">Meat</span>
-                <span className="text-right font-medium">{formatWeight(animal.shares.owner.meat / 7)} kg</span>
+                <span className="text-right font-medium">{formatWeight(animal.shares.owner.meat / shareholders)} kg</span>
 
                 <span className="text-muted-foreground">Bone</span>
-                <span className="text-right font-medium">{formatWeight(animal.shares.owner.bone / 7)} kg</span>
+                <span className="text-right font-medium">{formatWeight(animal.shares.owner.bone / shareholders)} kg</span>
 
                 <span className="text-muted-foreground">Liver</span>
-                <span className="text-right font-medium">{formatWeight(animal.shares.owner.liver / 7)} kg</span>
+                <span className="text-right font-medium">{formatWeight(animal.shares.owner.liver / shareholders)} kg</span>
                 
                 <div className="col-span-2 my-1 border-b" />
 
                 <span className="font-bold">Total</span>
-                <span className="text-right font-bold">{formatWeight(animal.shares.owner.total / 7)} kg</span>
+                <span className="text-right font-bold">{formatWeight(animal.shares.owner.total / shareholders)} kg</span>
             </div>
           </div>
 

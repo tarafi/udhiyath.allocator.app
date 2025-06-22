@@ -28,6 +28,7 @@ import {
 
 const formSchema = z.object({
   animalId: z.string().min(1, { message: "Animal ID is required." }),
+  shareholders: z.coerce.number().int().min(1, { message: "Must be at least 1." }),
   meatWeights: z.array(z.object({ value: z.coerce.number().gt(0, { message: "Must be > 0" }) })),
   boneWeights: z.array(z.object({ value: z.coerce.number().gt(0, { message: "Must be > 0" }) })),
   liverWeights: z.array(z.object({ value: z.coerce.number().gt(0, { message: "Must be > 0" }) })),
@@ -94,6 +95,7 @@ export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFor
     resolver: zodResolver(formSchema),
     defaultValues: {
       animalId: "",
+      shareholders: 7,
       meatWeights: [],
       boneWeights: [],
       liverWeights: [],
@@ -109,6 +111,7 @@ export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFor
     if (animalToEdit) {
       form.reset({
         animalId: animalToEdit.id,
+        shareholders: animalToEdit.shareholders,
         meatWeights: mapWeights(animalToEdit.meatWeights),
         boneWeights: mapWeights(animalToEdit.boneWeights),
         liverWeights: mapWeights(animalToEdit.liverWeights),
@@ -116,6 +119,7 @@ export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFor
     } else {
       form.reset({
         animalId: "",
+        shareholders: 7,
         meatWeights: [{ value: undefined }],
         boneWeights: [{ value: undefined }],
         liverWeights: [{ value: undefined }],
@@ -131,6 +135,7 @@ export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFor
 
     const calculatedData: CalculatedAnimalData = {
       id: data.animalId.toUpperCase(),
+      shareholders: data.shareholders,
       meatWeights: data.meatWeights.map(w => w.value || 0),
       boneWeights: data.boneWeights.map(w => w.value || 0),
       liverWeights: data.liverWeights.map(w => w.value || 0),
@@ -159,6 +164,7 @@ export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFor
     if (!animalToEdit) {
       form.reset({
         animalId: "",
+        shareholders: 7,
         meatWeights: [{ value: undefined }],
         boneWeights: [{ value: undefined }],
         liverWeights: [{ value: undefined }],
@@ -176,30 +182,50 @@ export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFor
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
           <CardContent className="space-y-8">
-            <FormField
-              control={form.control}
-              name="animalId"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel className="text-lg">Animal ID</FormLabel>
-                   <Select onValueChange={field.onChange} value={field.value} disabled={!!animalToEdit}>
-                    <FormControl>
-                      <SelectTrigger disabled={!!animalToEdit}>
-                        <SelectValue placeholder="Select an animal ID" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      {Array.from({ length: 10 }, (_, i) => `B${i + 1}`).map((id) => (
-                        <SelectItem key={id} value={id}>
-                          <span role="img" aria-label="buffalo" className="mr-2">🐃</span> {id}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 gap-y-4 items-end">
+                <FormField
+                  control={form.control}
+                  name="animalId"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-lg">Animal ID</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value} disabled={!!animalToEdit}>
+                        <FormControl>
+                          <SelectTrigger disabled={!!animalToEdit}>
+                            <SelectValue placeholder="Select an animal ID" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          {Array.from({ length: 10 }, (_, i) => `B${i + 1}`).map((id) => (
+                            <SelectItem key={id} value={id}>
+                              <span role="img" aria-label="buffalo" className="mr-2">🐃</span> {id}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={form.control}
+                  name="shareholders"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel className="text-lg">No. of Shareholders</FormLabel>
+                      <FormControl>
+                        <Input
+                          type="number"
+                          min="1"
+                          {...field}
+                          onChange={(e) => field.onChange(parseInt(e.target.value, 10) || 1)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+            </div>
             <Separator />
             <WeightInputSection control={form.control} name="meatWeights" label="Meat" Icon={Beef} />
             <Separator />
