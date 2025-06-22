@@ -156,6 +156,14 @@ export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFor
       },
     };
     onAddAnimal(calculatedData);
+    if (!animalToEdit) {
+      form.reset({
+        animalId: "",
+        meatWeights: [{ value: undefined }],
+        boneWeights: [{ value: undefined }],
+        liverWeights: [{ value: undefined }],
+      });
+    }
   }
 
   return (
