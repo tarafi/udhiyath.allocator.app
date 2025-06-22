@@ -103,6 +103,25 @@ export function AnimalCard({ animal, onEdit }: AnimalCardProps) {
                 <span className="text-right font-bold">{formatWeight(animal.shares.owner.total)} kg</span>
             </div>
           </div>
+          
+          <div className="mt-6 pt-4 border-t">
+            <h4 className="font-semibold text-lg mb-2 text-primary">Individual Owner's Share (1 of 7)</h4>
+            <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
+                <span className="text-muted-foreground">Meat</span>
+                <span className="text-right font-medium">{formatWeight(animal.shares.owner.meat / 7)} kg</span>
+
+                <span className="text-muted-foreground">Bone</span>
+                <span className="text-right font-medium">{formatWeight(animal.shares.owner.bone / 7)} kg</span>
+
+                <span className="text-muted-foreground">Liver</span>
+                <span className="text-right font-medium">{formatWeight(animal.shares.owner.liver / 7)} kg</span>
+                
+                <div className="col-span-2 my-1 border-b" />
+
+                <span className="font-bold">Total</span>
+                <span className="text-right font-bold">{formatWeight(animal.shares.owner.total / 7)} kg</span>
+            </div>
+          </div>
 
         </AccordionContent>
       </AccordionItem>
