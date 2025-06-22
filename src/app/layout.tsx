@@ -3,7 +3,7 @@ import { Toaster } from "@/components/ui/toaster"
 import './globals.css';
 
 export const metadata: Metadata = {
-  title: 'Udhiyath Allocator',
+  title: "Ud'hiyath Allocator",
   description: 'Manage Bakrid meat distribution with ease.',
 };
 
