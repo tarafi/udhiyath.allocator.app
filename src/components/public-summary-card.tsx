@@ -12,10 +12,10 @@ interface PublicSummaryCardProps {
 }
 
 export function PublicSummaryCard({ animals }: PublicSummaryCardProps) {
-  const [households, setHouseholds] = useState(130);
-  const [meatTakenOut, setMeatTakenOut] = useState(0);
-  const [boneTakenOut, setBoneTakenOut] = useState(0);
-  const [liverTakenOut, setLiverTakenOut] = useState(0);
+  const [households, setHouseholds] = useState("130");
+  const [meatTakenOut, setMeatTakenOut] = useState("");
+  const [boneTakenOut, setBoneTakenOut] = useState("");
+  const [liverTakenOut, setLiverTakenOut] = useState("");
 
   const totals = useMemo(() => {
     const totalPublicMeat = animals.reduce((sum, a) => sum + a.shares.public.meat, 0);
@@ -23,14 +23,14 @@ export function PublicSummaryCard({ animals }: PublicSummaryCardProps) {
     const totalPublicLiver = animals.reduce((sum, a) => sum + a.shares.public.liver, 0);
     
     return {
-      meat: totalPublicMeat - meatTakenOut,
-      bone: totalPublicBone - boneTakenOut,
-      liver: totalPublicLiver - liverTakenOut,
+      meat: totalPublicMeat - (parseFloat(meatTakenOut) || 0),
+      bone: totalPublicBone - (parseFloat(boneTakenOut) || 0),
+      liver: totalPublicLiver - (parseFloat(liverTakenOut) || 0),
     };
   }, [animals, meatTakenOut, boneTakenOut, liverTakenOut]);
   
   const perHousehold = useMemo(() => {
-    const validHouseholds = households > 0 ? households : 1;
+    const validHouseholds = parseInt(households, 10) > 0 ? parseInt(households, 10) : 1;
     return {
         meat: totals.meat > 0 ? totals.meat / validHouseholds : 0,
         bone: totals.bone > 0 ? totals.bone / validHouseholds : 0,
@@ -58,8 +58,9 @@ export function PublicSummaryCard({ animals }: PublicSummaryCardProps) {
                       id="households"
                       type="number"
                       value={households}
-                      onChange={(e) => setHouseholds(parseInt(e.target.value, 10) || 0)}
+                      onChange={(e) => setHouseholds(e.target.value)}
                       className="max-w-xs mt-1"
+                      placeholder="e.g. 130"
                     />
                 </div>
                 <div className="space-y-2 pt-4 border-t">
@@ -71,7 +72,7 @@ export function PublicSummaryCard({ animals }: PublicSummaryCardProps) {
                                 id="meat-taken-out"
                                 type="number"
                                 value={meatTakenOut}
-                                onChange={(e) => setMeatTakenOut(parseFloat(e.target.value) || 0)}
+                                onChange={(e) => setMeatTakenOut(e.target.value)}
                                 placeholder="0"
                             />
                         </div>
@@ -81,7 +82,7 @@ export function PublicSummaryCard({ animals }: PublicSummaryCardProps) {
                                 id="bone-taken-out"
                                 type="number"
                                 value={boneTakenOut}
-                                onChange={(e) => setBoneTakenOut(parseFloat(e.target.value) || 0)}
+                                onChange={(e) => setBoneTakenOut(e.target.value)}
                                 placeholder="0"
                             />
                         </div>
@@ -91,7 +92,7 @@ export function PublicSummaryCard({ animals }: PublicSummaryCardProps) {
                                 id="liver-taken-out"
                                 type="number"
                                 value={liverTakenOut}
-                                onChange={(e) => setLiverTakenOut(parseFloat(e.target.value) || 0)}
+                                onChange={(e) => setLiverTakenOut(e.target.value)}
                                 placeholder="0"
                             />
                         </div>

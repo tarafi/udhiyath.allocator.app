@@ -17,6 +17,13 @@ import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/componen
 import { Separator } from "@/components/ui/separator";
 import { PlusCircle, Trash2, Beef, Bone, Heart } from "lucide-react";
 import type { CalculatedAnimalData } from "@/lib/types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const formSchema = z.object({
   animalId: z.string().min(1, { message: "Animal ID is required." }),
@@ -53,7 +60,13 @@ const WeightInputSection = ({ control, name, label, Icon }: { control: any, name
               <FormItem>
                 <div className="flex items-center gap-2">
                   <FormControl>
-                    <Input type="number" placeholder={`Weight ${index + 1} (kg)`} {...field} />
+                    <Input 
+                      type="number"
+                      placeholder={`Weight ${index + 1} (kg)`} 
+                      {...field}
+                      value={field.value || ''}
+                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                    />
                   </FormControl>
                   <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} aria-label={`Remove ${label} weight ${index + 1}`}>
                     <Trash2 className="h-4 w-4 text-destructive" />
@@ -85,15 +98,15 @@ export function AnimalForm({ onAddAnimal }: AnimalFormProps) {
   });
 
   function onSubmit(data: AnimalFormValues) {
-    const meatTotal = data.meatWeights.reduce((sum, item) => sum + item.value, 0);
-    const boneTotal = data.boneWeights.reduce((sum, item) => sum + item.value, 0);
-    const liverTotal = data.liverWeights.reduce((sum, item) => sum + item.value, 0);
+    const meatTotal = data.meatWeights.reduce((sum, item) => sum + (item.value || 0), 0);
+    const boneTotal = data.boneWeights.reduce((sum, item) => sum + (item.value || 0), 0);
+    const liverTotal = data.liverWeights.reduce((sum, item) => sum + (item.value || 0), 0);
 
     const calculatedData: CalculatedAnimalData = {
       id: data.animalId.toUpperCase(),
-      meatWeights: data.meatWeights.map(w => w.value),
-      boneWeights: data.boneWeights.map(w => w.value),
-      liverWeights: data.liverWeights.map(w => w.value),
+      meatWeights: data.meatWeights.map(w => w.value || 0),
+      boneWeights: data.boneWeights.map(w => w.value || 0),
+      liverWeights: data.liverWeights.map(w => w.value || 0),
       totals: {
         meat: meatTotal,
         bone: boneTotal,
@@ -138,9 +151,20 @@ export function AnimalForm({ onAddAnimal }: AnimalFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-lg">Animal ID</FormLabel>
-                  <FormControl>
-                    <Input placeholder="e.g., B1" {...field} />
-                  </FormControl>
+                   <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select an animal ID" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      {Array.from({ length: 10 }, (_, i) => `B${i + 1}`).map((id) => (
+                        <SelectItem key={id} value={id}>
+                          <span role="img" aria-label="buffalo" className="mr-2">🐃</span> {id}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                   <FormMessage />
                 </FormItem>
               )}
@@ -153,7 +177,7 @@ export function AnimalForm({ onAddAnimal }: AnimalFormProps) {
             <WeightInputSection control={form.control} name="liverWeights" label="Liver" Icon={Heart} />
           </CardContent>
           <CardFooter>
-            <Button type="submit" size="lg" className="w-full sm:w-auto bg-accent hover:bg-accent/90">
+            <Button type="submit" size="lg" className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground">
               <PlusCircle className="mr-2 h-5 w-5" />
               Add / Update Animal Data
             </Button>
