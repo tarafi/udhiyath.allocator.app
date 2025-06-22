@@ -65,7 +65,7 @@ const WeightInputSection = ({ control, name, label, Icon }: { control: any, name
                   <FormControl>
                     <Input 
                       type="number"
-                      placeholder={`Weight ${index + 1} (kg)`} 
+                      placeholder="Weight (kg)" 
                       {...field}
                       value={field.value ?? ''}
                       onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
