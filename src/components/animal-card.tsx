@@ -57,53 +57,39 @@ export function AnimalCard({ animal, onEdit }: AnimalCardProps) {
             <TableHeader>
               <TableRow>
                 <TableHead>Category</TableHead>
-                <TableHead className="text-right">Public Share (2/3)</TableHead>
+                <TableHead className="text-right">Owner's Share</TableHead>
+                <TableHead className="text-right">Public Share</TableHead>
                 <TableHead className="text-right">Total Weight</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               <TableRow>
                 <TableCell className="font-medium">Meat</TableCell>
+                <TableCell className="text-right">{formatWeight(animal.shares.owner.meat)} kg</TableCell>
                 <TableCell className="text-right">{formatWeight(animal.shares.public.meat)} kg</TableCell>
                 <TableCell className="text-right">{formatWeight(animal.totals.meat)} kg</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Bone</TableCell>
+                <TableCell className="text-right">{formatWeight(animal.shares.owner.bone)} kg</TableCell>
                 <TableCell className="text-right">{formatWeight(animal.shares.public.bone)} kg</TableCell>
                 <TableCell className="text-right">{formatWeight(animal.totals.bone)} kg</TableCell>
               </TableRow>
               <TableRow>
                 <TableCell className="font-medium">Liver</TableCell>
+                <TableCell className="text-right">{formatWeight(animal.shares.owner.liver)} kg</TableCell>
                 <TableCell className="text-right">{formatWeight(animal.shares.public.liver)} kg</TableCell>
                 <TableCell className="text-right">{formatWeight(animal.totals.liver)} kg</TableCell>
               </TableRow>
               <TableRow className="font-bold bg-muted/50">
                 <TableCell>TOTAL</TableCell>
+                <TableCell className="text-right">{formatWeight(animal.shares.owner.total)} kg</TableCell>
                 <TableCell className="text-right">{formatWeight(animal.shares.public.total)} kg</TableCell>
                 <TableCell className="text-right">{formatWeight(animal.totals.all)} kg</TableCell>
               </TableRow>
             </TableBody>
           </Table>
 
-          <div className="mt-6 pt-4 border-t">
-            <h4 className="font-semibold text-lg mb-2 text-primary">Owner's Share Breakdown (1/3)</h4>
-            <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
-                <span className="text-muted-foreground">Meat</span>
-                <span className="text-right font-medium">{formatWeight(animal.shares.owner.meat)} kg</span>
-
-                <span className="text-muted-foreground">Bone</span>
-                <span className="text-right font-medium">{formatWeight(animal.shares.owner.bone)} kg</span>
-
-                <span className="text-muted-foreground">Liver</span>
-                <span className="text-right font-medium">{formatWeight(animal.shares.owner.liver)} kg</span>
-                
-                <div className="col-span-2 my-1 border-b" />
-
-                <span className="font-bold">Total</span>
-                <span className="text-right font-bold">{formatWeight(animal.shares.owner.total)} kg</span>
-            </div>
-          </div>
-          
           <div className="mt-6 pt-4 border-t">
             <h4 className="font-semibold text-lg mb-2 text-primary">Individual Owner's Share (1 of 7)</h4>
             <div className="grid grid-cols-2 gap-x-8 gap-y-1 text-sm">
