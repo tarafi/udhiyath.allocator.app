@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useFieldArray, useForm } from "react-hook-form";
 import { z } from "zod";
@@ -27,15 +28,17 @@ import {
 
 const formSchema = z.object({
   animalId: z.string().min(1, { message: "Animal ID is required." }),
-  meatWeights: z.array(z.object({ value: z.coerce.number().positive({ message: "Must be > 0" }) })),
-  boneWeights: z.array(z.object({ value: z.coerce.number().positive({ message: "Must be > 0" }) })),
-  liverWeights: z.array(z.object({ value: z.coerce.number().positive({ message: "Must be > 0" }) })),
+  meatWeights: z.array(z.object({ value: z.coerce.number().gt(0, { message: "Must be > 0" }) })),
+  boneWeights: z.array(z.object({ value: z.coerce.number().gt(0, { message: "Must be > 0" }) })),
+  liverWeights: z.array(z.object({ value: z.coerce.number().gt(0, { message: "Must be > 0" }) })),
 });
 
 type AnimalFormValues = z.infer<typeof formSchema>;
 
 interface AnimalFormProps {
   onAddAnimal: (animal: CalculatedAnimalData) => void;
+  animalToEdit: CalculatedAnimalData | null;
+  onFormClear: () => void;
 }
 
 const WeightInputSection = ({ control, name, label, Icon }: { control: any, name: "meatWeights" | "boneWeights" | "liverWeights", label: string, Icon: React.ElementType }) => {
@@ -64,8 +67,8 @@ const WeightInputSection = ({ control, name, label, Icon }: { control: any, name
                       type="number"
                       placeholder={`Weight ${index + 1} (kg)`} 
                       {...field}
-                      value={field.value || ''}
-                      onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
+                      value={field.value ?? ''}
+                      onChange={(e) => field.onChange(e.target.value === '' ? undefined : parseFloat(e.target.value))}
                     />
                   </FormControl>
                   <Button type="button" variant="ghost" size="icon" onClick={() => remove(index)} aria-label={`Remove ${label} weight ${index + 1}`}>
@@ -78,7 +81,7 @@ const WeightInputSection = ({ control, name, label, Icon }: { control: any, name
           />
         ))}
       </div>
-      <Button type="button" variant="outline" size="sm" onClick={() => append({ value: 0 })}>
+      <Button type="button" variant="outline" size="sm" onClick={() => append({ value: undefined })}>
         <PlusCircle className="mr-2 h-4 w-4" />
         Add {label} Weight
       </Button>
@@ -86,16 +89,39 @@ const WeightInputSection = ({ control, name, label, Icon }: { control: any, name
   );
 };
 
-export function AnimalForm({ onAddAnimal }: AnimalFormProps) {
+export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFormProps) {
   const form = useForm<AnimalFormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       animalId: "",
-      meatWeights: [{ value: 0 }],
-      boneWeights: [{ value: 0 }],
-      liverWeights: [{ value: 0 }],
+      meatWeights: [],
+      boneWeights: [],
+      liverWeights: [],
     },
   });
+
+  useEffect(() => {
+    const mapWeights = (weights: number[]) => {
+      const mapped = weights.filter(w => w > 0).map(value => ({ value }));
+      return mapped.length > 0 ? mapped : [{ value: undefined }];
+    };
+
+    if (animalToEdit) {
+      form.reset({
+        animalId: animalToEdit.id,
+        meatWeights: mapWeights(animalToEdit.meatWeights),
+        boneWeights: mapWeights(animalToEdit.boneWeights),
+        liverWeights: mapWeights(animalToEdit.liverWeights),
+      });
+    } else {
+      form.reset({
+        animalId: "",
+        meatWeights: [{ value: undefined }],
+        boneWeights: [{ value: undefined }],
+        liverWeights: [{ value: undefined }],
+      });
+    }
+  }, [animalToEdit, form.reset]);
 
   function onSubmit(data: AnimalFormValues) {
     const meatTotal = data.meatWeights.reduce((sum, item) => sum + (item.value || 0), 0);
@@ -129,18 +155,14 @@ export function AnimalForm({ onAddAnimal }: AnimalFormProps) {
       },
     };
     onAddAnimal(calculatedData);
-    form.reset({
-      animalId: "",
-      meatWeights: [{ value: 0 }],
-      boneWeights: [{ value: 0 }],
-      liverWeights: [{ value: 0 }],
-    });
   }
 
   return (
     <Card className="w-full shadow-lg">
       <CardHeader>
-        <CardTitle className="text-2xl font-headline">Enter Animal Weights</CardTitle>
+        <CardTitle className="text-2xl font-headline">
+          {animalToEdit ? `Editing Animal: ${animalToEdit.id}` : 'Enter Animal Weights'}
+        </CardTitle>
       </CardHeader>
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -151,9 +173,9 @@ export function AnimalForm({ onAddAnimal }: AnimalFormProps) {
               render={({ field }) => (
                 <FormItem>
                   <FormLabel className="text-lg">Animal ID</FormLabel>
-                   <Select onValueChange={field.onChange} defaultValue={field.value}>
+                   <Select onValueChange={field.onChange} value={field.value} disabled={!!animalToEdit}>
                     <FormControl>
-                      <SelectTrigger>
+                      <SelectTrigger disabled={!!animalToEdit}>
                         <SelectValue placeholder="Select an animal ID" />
                       </SelectTrigger>
                     </FormControl>
@@ -176,11 +198,16 @@ export function AnimalForm({ onAddAnimal }: AnimalFormProps) {
             <Separator />
             <WeightInputSection control={form.control} name="liverWeights" label="Liver" Icon={Heart} />
           </CardContent>
-          <CardFooter>
-            <Button type="submit" size="lg" className="w-full sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground">
+          <CardFooter className="flex items-center justify-between">
+            <Button type="submit" size="lg" className="sm:w-auto bg-accent hover:bg-accent/90 text-accent-foreground">
               <PlusCircle className="mr-2 h-5 w-5" />
-              Add / Update Animal Data
+              {animalToEdit ? 'Update Animal Data' : 'Add Animal Data'}
             </Button>
+            {animalToEdit && (
+               <Button type="button" variant="outline" onClick={onFormClear}>
+                 Cancel Edit
+               </Button>
+            )}
           </CardFooter>
         </form>
       </Form>

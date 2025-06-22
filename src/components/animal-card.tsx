@@ -15,19 +15,37 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Pencil } from "lucide-react";
 
 interface AnimalCardProps {
   animal: CalculatedAnimalData;
+  onEdit: (animalId: string) => void;
 }
 
 const formatWeight = (weight: number) => weight.toFixed(2);
 
-export function AnimalCard({ animal }: AnimalCardProps) {
+export function AnimalCard({ animal, onEdit }: AnimalCardProps) {
   return (
     <Card className="shadow-md">
       <AccordionItem value={animal.id} className="border-b-0">
         <AccordionTrigger className="p-4 text-xl font-bold font-headline hover:no-underline">
-          Animal: {animal.id}
+          <div className="flex items-center gap-4">
+            <span>Animal: {animal.id}</span>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={(e) => {
+                e.stopPropagation();
+                onEdit(animal.id);
+              }}
+              className="text-sm font-medium"
+              aria-label={`Edit ${animal.id}`}
+            >
+              <Pencil className="h-4 w-4" />
+              <span>Edit</span>
+            </Button>
+          </div>
         </AccordionTrigger>
         <AccordionContent className="p-4 pt-0">
           <Table>

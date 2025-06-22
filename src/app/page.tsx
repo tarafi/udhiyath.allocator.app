@@ -10,6 +10,7 @@ import type { CalculatedAnimalData } from "@/lib/types";
 
 export default function Home() {
   const [animals, setAnimals] = useState<CalculatedAnimalData[]>([]);
+  const [editingAnimal, setEditingAnimal] = useState<CalculatedAnimalData | null>(null);
 
   const handleAddAnimal = (newAnimal: CalculatedAnimalData) => {
     setAnimals((prev) => {
@@ -21,13 +22,30 @@ export default function Home() {
       }
       return [...prev, newAnimal].sort((a,b) => a.id.localeCompare(b.id));
     });
+    setEditingAnimal(null);
   };
+
+  const handleEdit = (animalId: string) => {
+    const animalToEdit = animals.find((a) => a.id === animalId);
+    if (animalToEdit) {
+      setEditingAnimal(animalToEdit);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  };
+
+  const handleClearForm = () => {
+    setEditingAnimal(null);
+  }
 
   return (
     <main className="container mx-auto px-4 py-8 md:py-12">
       <div className="max-w-4xl mx-auto flex flex-col gap-12">
         <Header />
-        <AnimalForm onAddAnimal={handleAddAnimal} />
+        <AnimalForm 
+          onAddAnimal={handleAddAnimal} 
+          animalToEdit={editingAnimal}
+          onFormClear={handleClearForm}
+        />
         
         {animals.length > 0 && (
           <section className="space-y-6">
@@ -36,7 +54,7 @@ export default function Home() {
             </h2>
             <Accordion type="multiple" className="w-full space-y-4">
               {animals.map((animal) => (
-                <AnimalCard key={animal.id} animal={animal} />
+                <AnimalCard key={animal.id} animal={animal} onEdit={handleEdit} />
               ))}
             </Accordion>
           </section>
