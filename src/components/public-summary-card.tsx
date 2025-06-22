@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import type { CalculatedAnimalData } from "@/lib/types";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -9,13 +9,27 @@ import { Beef, Bone, Heart } from "lucide-react";
 
 interface PublicSummaryCardProps {
   animals: CalculatedAnimalData[];
+  households: string;
+  setHouseholds: (value: string) => void;
+  meatTakenOut: string;
+  setMeatTakenOut: (value: string) => void;
+  boneTakenOut: string;
+  setBoneTakenOut: (value: string) => void;
+  liverTakenOut: string;
+  setLiverTakenOut: (value: string) => void;
 }
 
-export function PublicSummaryCard({ animals }: PublicSummaryCardProps) {
-  const [households, setHouseholds] = useState("130");
-  const [meatTakenOut, setMeatTakenOut] = useState("");
-  const [boneTakenOut, setBoneTakenOut] = useState("");
-  const [liverTakenOut, setLiverTakenOut] = useState("");
+export function PublicSummaryCard({ 
+  animals,
+  households,
+  setHouseholds,
+  meatTakenOut,
+  setMeatTakenOut,
+  boneTakenOut,
+  setBoneTakenOut,
+  liverTakenOut,
+  setLiverTakenOut
+}: PublicSummaryCardProps) {
 
   const totals = useMemo(() => {
     const totalPublicMeat = animals.reduce((sum, a) => sum + a.shares.public.meat, 0);
