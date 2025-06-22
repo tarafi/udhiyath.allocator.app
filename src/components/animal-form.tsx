@@ -121,7 +121,8 @@ export function AnimalForm({ onAddAnimal, animalToEdit, onFormClear }: AnimalFor
         liverWeights: [{ value: undefined }],
       });
     }
-  }, [animalToEdit, form.reset]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [animalToEdit]);
 
   function onSubmit(data: AnimalFormValues) {
     const meatTotal = data.meatWeights.reduce((sum, item) => sum + (item.value || 0), 0);
