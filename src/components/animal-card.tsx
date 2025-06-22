@@ -1,10 +1,10 @@
 "use client";
 
+import * as AccordionPrimitive from "@radix-ui/react-accordion";
 import type { CalculatedAnimalData } from "@/lib/types";
 import {
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
 } from "@/components/ui/accordion";
 import {
   Table,
@@ -16,7 +16,8 @@ import {
 } from "@/components/ui/table";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Pencil } from "lucide-react";
+import { ChevronDown, Pencil } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface AnimalCardProps {
   animal: CalculatedAnimalData;
@@ -29,16 +30,20 @@ export function AnimalCard({ animal, onEdit }: AnimalCardProps) {
   return (
     <Card className="shadow-md">
       <AccordionItem value={animal.id} className="border-b-0">
-        <AccordionTrigger className="p-4 text-xl font-bold font-headline hover:no-underline">
-          <div className="flex items-center gap-4">
+        <AccordionPrimitive.Header className="flex w-full items-center">
+          <AccordionPrimitive.Trigger
+            className={cn(
+              "flex flex-1 items-center justify-between p-4 text-xl font-bold font-headline transition-all hover:no-underline [&[data-state=open]>svg]:rotate-180"
+            )}
+          >
             <span>Animal: {animal.id}</span>
+            <ChevronDown className="h-4 w-4 shrink-0 transition-transform duration-200" />
+          </AccordionPrimitive.Trigger>
+          <div className="pr-4">
             <Button
               variant="outline"
               size="sm"
-              onClick={(e) => {
-                e.stopPropagation();
-                onEdit(animal.id);
-              }}
+              onClick={() => onEdit(animal.id)}
               className="text-sm font-medium"
               aria-label={`Edit ${animal.id}`}
             >
@@ -46,7 +51,7 @@ export function AnimalCard({ animal, onEdit }: AnimalCardProps) {
               <span>Edit</span>
             </Button>
           </div>
-        </AccordionTrigger>
+        </AccordionPrimitive.Header>
         <AccordionContent className="p-4 pt-0">
           <Table>
             <TableHeader>
