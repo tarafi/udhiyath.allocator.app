@@ -8,7 +8,7 @@ export function Header() {
         Manage Bakrid meat distribution with ease
       </p>
       <p className="mt-1 text-sm text-muted-foreground/80 italic">
-        developed by Dr. Muhammed Rafi Hansani
+        Developed by Dr. Muhammed Rafi Hansani
       </p>
       <p className="mt-2 text-base text-muted-foreground font-medium">
         For Nalladam Juma Masjid
